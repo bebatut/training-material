@@ -307,6 +307,8 @@ In this tutorial, we offer several versions, each highlighting a different binne
 {% include topics/microbiome/tutorials/metagenomics-binning/comebin_version.md %}
 </div>
 
+<!-- Add CheckM2 to check bin quality after binner -->
+
 # Bin refinement
 
 Now that we have produced bins with our favorite binner, we can refine the recovered bins. 
@@ -344,6 +346,8 @@ For the refinement, we will use the bins created by all the binners used before.
 >
 >    {% snippet faqs/galaxy/collections_build_list.md %}
 {: .hands_on}
+
+<!-- Add step when binners have been run -->
 
 Once each bin set is converted into one collection, it can be converted into a contig-to-bin mapping table. We need to perform this step for every bin set.
 
@@ -494,27 +498,15 @@ loq quality bin, would have normally been filtered by Binette if the `Set minimu
 >
 {: .question}
 
-> <comment-title>CheckM2 vs CheckM</comment-title>
-> CheckM2 ({%cite Chklovski2023CheckM2%}) is the successor of CheckM, but CheckM is still widely used, since its marker-based logic can be more interpretable in a biological sense. E.g., to date (2025-11-21), NCBI still allows submitting MAGs to GenBank if either checkM or checkM2 has a completeness of > 90% (see the [NCBI WGS/MAG submission guidelines](https://www.ncbi.nlm.nih.gov/genbank/wgsfaq/#metagen)).
->
-> **Key differences compared to CheckM1**:
->
-> * CheckM1 relies primarily on lineage-specific single-copy marker genes to estimate completeness and contamination of microbial genomes.
-> * CheckM2 uses a machine-learning (gradient boost / ML) approach trained on simulated and experimental genomes, and does *not* strictly require a well-represented lineage in its marker database. 
-> * CheckM2 is reported to be more accurate and faster for both bacterial and archaeal lineages, especially when dealing with novel or very reduced-genome lineages (e.g., candidate phyla, CPR/DPANN) where classical marker-gene methods may struggle. 
-> * The database of CheckM2 can be updated more rapidly with new high-quality reference genomes, which supports scalability and improved performance over time.
->
-> If you're working with MAGs from underrepresented taxa (novel lineages) or very small genomes (streamlined bacteria/archaea), CheckM2 tends to give more reliable estimates of completeness/contamination. For more “standard” microbial genomes from well-studied taxa, CheckM1 may still work well, but you may benefit from the improved performance with CheckM2.
->
-{: .comment}
+{% snippet topics/microbiome/faqs/checkm_checkm2.md %}
 
 # De-replication
 
-De-replication is the process of identifying sets of genomes that are the "same" in a list of genomes, and removing all but the “best” genome from each redundant set. How similar genomes need to be to be considered “same”, how to determine which genome is “best”, and other important decisions are discussed in [Important Concepts](https://drep.readthedocs.io/en/latest/choosing_parameters.html).
+De-replication is the process of identifying sets of genomes that are the "same" in a list of genomes, and removing all but the "best" genome from each redundant set. How similar genomes need to be to be considered "same", how to determine which genome is "best", and other important decisions are discussed in [Important Concepts](https://drep.readthedocs.io/en/latest/choosing_parameters.html).
 
-A common use for genome de-replication is the case of individual assembly of metagenomic data. If metagenomic samples are collected in a series, a common way to assemble the short reads is with a “co-assembly”. That is, combining the reads from all samples and assembling them. The problem with this is that assembling similar strains can severely fragment assemblies, precluding the recovery of a good genome bin. An alternative option is to assemble each sample separately, and then “de-replicate” the bins from each assembly to make a final genome set.
+A common use for genome de-replication is the case of individual assembly of metagenomic data. If metagenomic samples are collected in a series, a common way to assemble the short reads is with a "co-assembly". That is, combining the reads from all samples and assembling them. The problem with this is that assembling similar strains can severely fragment assemblies, precluding the recovery of a good genome bin. An alternative option is to assemble each sample separately, and then "de-replicate" the bins from each assembly to make a final genome set.
 
-![Image shows the process of individual assembly on two strains and five samples, after individual assembly of samples two samples are chosen for de-replication process. In parallel, co-assembly on all five samples is performed](./individual-assembly.png "Individual assembly followed by de-replication vs co-assembly"){:width="80%"}
+![Image shows the process of individual assembly on two strains and five samples, after individual assembly of samples two samples are chosen for de-replication process. In parallel, co-assembly on all five samples is performed](./images/individual-assembly.png "Individual assembly followed by de-replication vs co-assembly"){:width="80%"}
 
 Several tools have been designed for the process of de-replication. **dRep** ({% cite olm2017drep %}) is a software tool designed for the dereplication of genomes in metagenomic datasets. The goal is to retain a representative set of genomes to improve downstream analyses, such as taxonomic profiling and functional annotation.
 
@@ -530,17 +522,21 @@ An typical workflow of how dRep works for dereplication in metagenomics includes
 
 - *Dereplication Output*: The output of dRep includes information about the dereplicated genomes, including their identity, completeness, and contamination. The user can choose a threshold for genome similarity to control the level of dereplication.
 
+<!-- Have a proper de-replication explanation -->
+
 > <hands-on-title>General list of actions for de-replication</hands-on-title>
 > 1. Create new history
 > 2. Assemble each sample separately using your favorite assembler
-> 3. Perform a co-assembly to catch low-abundance microbes
-> 4. Bin each assembly separately using your favorite binner
-> 5. Bin co-assembly using your favorite binner
-> 6. Pull the bins from all assemblies together
+> 3. Bin assemblies using your favorite binner
+> 4. Pull the bins from all assemblies together
+> 5. Run {% tool [CheckM2](toolshed.g2.bx.psu.edu/repos/iuc/drep_dereplicate/drep_dereplicate/3.6.2+galaxy1) %}
+> 6. Text reformatting
 > 7. Run {% tool [dRep dereplication](toolshed.g2.bx.psu.edu/repos/iuc/drep_dereplicate/drep_dereplicate/3.6.2+galaxy1) %} on them
 > 8. Perform downstream analysis on the de-replicated genome list
 >
 {: .hands_on}
+
+<!-- Add coverM -->
 
 # Conclusions
 

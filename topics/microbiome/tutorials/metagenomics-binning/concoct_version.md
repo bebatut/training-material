@@ -62,13 +62,7 @@ Finally, the clustering results are mapped back to the **original contigs, allow
 {: .hands_on}
 
 
-While **CONCOCT** generates a table mapping contigs to their respective bins, it does not automatically produce **FASTA files** for each bin. To obtain these sequences for further analysis, users must employ the **`CONCOCT: Extract a FASTA file`** utility. This tool combines the original contig FASTA file with CONCOCT’s clustering results, extracts contigs assigned to a specific bin, and outputs a **FASTA file representing a single metagenome-assembled genome (MAG)**. This step is crucial for enabling downstream genomic analyses.
-
-
-
-
-
-
+While **CONCOCT** generates a table mapping contigs to their respective bins, it does not automatically produce **FASTA files** for each bin. To obtain these sequences for further analysis, users must employ the **`CONCOCT: Extract a FASTA file`** utility. This tool combines the original contig FASTA file with CONCOCT's clustering results, extracts contigs assigned to a specific bin, and outputs a **FASTA file representing a single metagenome-assembled genome (MAG)**. This step is crucial for enabling downstream genomic analyses.
 
 > <hands-on-title> Extract MAG FASTA files </hands-on-title>
 >
@@ -76,6 +70,30 @@ While **CONCOCT** generates a table mapping contigs to their respective bins, it
 >    * {% icon param-collection %} *"Original contig file"*: `output` (Input dataset collection)
 >    * {% icon param-file %} *"CONCOCT clusters"*: `output` (output of **CONCOCT: Merge cut clusters** {% icon tool %})
 {: .hands_on}
+
+Summary of CONCOCT steps:
+
+<figure>
+<pre class="mermaid">
+flowchart LR
+    input1[Contigs]
+    input2[Input reads mapped on contigs]
+    input3[Read length]
+    1[CONCOCT: Cut up contigs]
+    2[CONCOCT: Generate the input coverage table]
+    3[CONCOCT]
+    4[CONCOCT: Merge cut clusters]
+    5[CONCOCT: Extract a fasta file]
+    input1 --> 1
+    1 --> 2
+    input2 --> 2
+    1 --> 3
+    2 --> 3
+    input3 --> 3
+    3 --> 4
+    4 --> 5
+</pre>
+</figure>
 
 > <question-title>Binning metrics</question-title>
 >
